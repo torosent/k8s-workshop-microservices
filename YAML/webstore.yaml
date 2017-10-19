@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: webstore-deployment
+spec:
+  replicas: 1 # tells deployment to run 1 pods matching the template
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: webstore
+    spec:
+      containers:
+      - name: webstore
+        image: torosent/webstore:1.0.10
+        ports:
+        - containerPort: 3000
+        env:
+        - name: ORDER_SERVICE
+          value: "http://orderservice/api/order"
+        - name: STATUS_SERVICE
+          value: "http://statusservice/api/status" 

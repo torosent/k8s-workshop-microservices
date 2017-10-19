@@ -1,0 +1,22 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: statusservice-deployment
+spec:
+  replicas: 1 # tells deployment to run 1 pods matching the template
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: statusservice
+    spec:
+      containers:
+      - name: statuservice
+        image: torosent/statusservice:1.0.1
+        ports:
+        - containerPort: 80
+        env:
+        - name: StorageConnectionString
+          valueFrom:
+            secretKeyRef:
+              name: stickerstore
+              key: StorageConnectionString

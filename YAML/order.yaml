@@ -1,0 +1,22 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: orderservice-deployment
+spec:
+  replicas: 1 # tells deployment to run 1 pods matching the template
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: orderservice
+    spec:
+      containers:
+      - name: orderservice
+        image: torosent/orderservice:1.0.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: SBConnectionString
+          valueFrom:
+            secretKeyRef:
+              name: stickerstore
+              key: SBConnectionString

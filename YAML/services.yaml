@@ -1,0 +1,44 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: webstore
+  labels:
+   app: webstore
+spec:
+  selector:
+    app: webstore
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 3000
+  type: LoadBalancer
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: orderservice
+  labels:
+   app: orderservice
+spec:
+  selector:
+    app: orderservice
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 80
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: statusservice
+  labels:
+   app: statusservice
+spec:
+  selector:
+    app: statusservice
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 80
+---
