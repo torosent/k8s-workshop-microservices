@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: webstore-deployment
@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: webstore
-        image: torosent/webstore:1.0.10
+        image: torosent/webstore:${BUILD_NUMBER}
         ports:
         - containerPort: 3000
         env:

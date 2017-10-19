@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: orderservice-deployment
@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: orderservice
-        image: torosent/orderservice:1.0.0
+        image: torosent/orderservice:${BUILD_NUMBER}
         ports:
         - containerPort: 80
         env:

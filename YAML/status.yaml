@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: statusservice-deployment
@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: statuservice
-        image: torosent/statusservice:1.0.1
+        image: torosent/statusservice:${BUILD_NUMBER}
         ports:
         - containerPort: 80
         env:
