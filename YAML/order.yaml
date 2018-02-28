@@ -11,12 +11,14 @@ spec:
     spec:
       containers:
       - name: orderservice
-        image: torosent/orderservice:${BUILD_NUMBER}
+        image: tomerplayground.azurecr.io/orderservice:latest
         ports:
         - containerPort: 80
         env:
-        - name: SBConnectionString
+        - name: StorageConnectionString
           valueFrom:
             secretKeyRef:
               name: stickerstore
-              key: SBConnectionString
+              key: StorageConnectionString
+      imagePullSecrets:
+      - name: acr-auth

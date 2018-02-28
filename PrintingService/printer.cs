@@ -1,97 +1,82 @@
 using System;
-using Microsoft.Azure.ServiceBus;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Text;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.WindowsAzure.Storage.Queue;
+class Printer
+{
+    static CloudQueue queue;
+    static CloudTableClient tableClient;
 
-    class Printer
+    public Printer()
     {
-        static IQueueClient queueClient;
-        static CloudTableClient tablelient;
-
-        public Printer()
+        try
         {
-            try
-            {
-                var serviceBusConnectionString = Environment.GetEnvironmentVariable("SBConnectionString");
-                Console.WriteLine(serviceBusConnectionString);
-                var storageConnectionString = Environment.GetEnvironmentVariable("StorageConnectionString");
-                CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse(storageConnectionString);
-                Console.WriteLine(storageConnectionString);
 
-                tablelient = cloudStorageAccount.CreateCloudTableClient();
-                
-                Console.WriteLine("Created Table Client");
+            var storageConnectionString = Environment.GetEnvironmentVariable("StorageConnectionString");
+            CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse(storageConnectionString);
+            Console.WriteLine(storageConnectionString);
 
-                const string QueueName = "stickersqueue";
-                queueClient = new QueueClient(serviceBusConnectionString, QueueName);
-                Console.WriteLine("Created Queue Client");
+            tableClient = cloudStorageAccount.CreateCloudTableClient();
 
-                RegisterOnMessageHandlerAndReceiveMessages();
-                
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            Console.WriteLine("Created Table Client");
+
+            const string QueueName = "stickersqueue";
+
+            var queueClient = cloudStorageAccount.CreateCloudQueueClient();
+            queue = queueClient.GetQueueReference(QueueName);
+
+            // Create the queue if it doesn't already exist
+            queue.CreateIfNotExistsAsync();
+
+            Console.WriteLine("Created Queue Client");
+
+            ReceiveMessages();
 
         }
-
-
-        static void RegisterOnMessageHandlerAndReceiveMessages()
+        catch (Exception ex)
         {
-            // Configure the MessageHandler Options in terms of exception handling, number of concurrent messages to deliver etc.
-            var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
-            {
-                // Maximum number of Concurrent calls to the callback `ProcessMessagesAsync`, set to 1 for simplicity.
-                // Set it according to how many messages the application wants to process in parallel.
-                MaxConcurrentCalls = 1,
-
-                // Indicates whether MessagePump should automatically complete the messages after returning from User Callback.
-                // False value below indicates the Complete will be handled by the User Callback as seen in `ProcessMessagesAsync`.
-                AutoComplete = false
-            };
-            // Register the function that will process messages
-            queueClient.RegisterMessageHandler(ProcessMessagesAsync, messageHandlerOptions);
-            Console.WriteLine("Registered Message Handler");
-
-        }
-        static async Task ProcessMessagesAsync(Message message, CancellationToken token)
-        {
-            var body = Encoding.UTF8.GetString(message.Body);
-            // Process the message
-            Console.WriteLine($"Received message: SequenceNumber:{message.SystemProperties.SequenceNumber} Body:{body}");
-
-            const string version = "1.0.8";
-            body = $"{body} ; Printer version: {version}";
-
-            InsertRowToTableStorage(body);
-            Thread.Sleep(500);
-            // Complete the message so that it is not received again.
-            // This can be done only if the queueClient is opened in ReceiveMode.PeekLock mode (which is default).
-            await queueClient.CompleteAsync(message.SystemProperties.LockToken);
+            Console.WriteLine(ex.Message);
         }
 
-        static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
+    }
+
+    private async void ReceiveMessages()
+    {
+
+        while (true)
         {
-            Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
-            return Task.CompletedTask;
-        }
-
-        static async void InsertRowToTableStorage(string body)
-        {
-            var table = tablelient.GetTableReference("status");
-            await table.CreateIfNotExistsAsync();
-
-            StatusEntity status = new StatusEntity();
-            status.Message = body;
-
-            // Create the TableOperation object that inserts the customer entity.
-            TableOperation insertOperation = TableOperation.InsertOrReplace(status);
-            // Execute the insert operation.
-            await table.ExecuteAsync(insertOperation);
+            var retrievedMessage = await queue.GetMessageAsync();
+            ProcessMessage(retrievedMessage);
+            await queue.DeleteMessageAsync(retrievedMessage);
         }
     }
+    private void ProcessMessage(CloudQueueMessage message)
+    {
+        var body = message.AsString;
+        // Process the message
+        const string version = "1.0.0";
+        body = $"{body} ; Printer version: {version}";
+
+        InsertRowToTableStorage(body);
+        Thread.Sleep(500);
+
+    }
+
+    private async void InsertRowToTableStorage(string body)
+    {
+        var table = tableClient.GetTableReference("status");
+        await table.CreateIfNotExistsAsync();
+
+        StatusEntity status = new StatusEntity();
+        status.Message = body;
+
+        // Create the TableOperation object that inserts the customer entity.
+        TableOperation insertOperation = TableOperation.InsertOrReplace(status);
+        // Execute the insert operation.
+        await table.ExecuteAsync(insertOperation);
+    }
+}

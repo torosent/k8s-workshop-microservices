@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: webstore
-        image: torosent/webstore:${BUILD_NUMBER}
+        image: tomerplayground.azurecr.io/webstore:latest
         ports:
         - containerPort: 3000
         env:

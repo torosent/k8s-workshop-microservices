@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: statuservice
-        image: torosent/statusservice:${BUILD_NUMBER}
+        image: tomerplayground.azurecr.io/statusservice:latest
         ports:
         - containerPort: 80
         env:
@@ -20,3 +20,5 @@ spec:
             secretKeyRef:
               name: stickerstore
               key: StorageConnectionString
+      imagePullSecrets:
+      - name: acr-auth

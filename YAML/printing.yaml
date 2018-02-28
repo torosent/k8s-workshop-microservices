@@ -11,16 +11,13 @@ spec:
     spec:
       containers:
       - name: printingservice
-        image: torosent/printingservice:${BUILD_NUMBER}
+        image: tomerplayground.azurecr.io/printingservice:latest
         imagePullPolicy: Always
         env:
-          - name: SBConnectionString
-            valueFrom:
-              secretKeyRef:
-                name: stickerstore
-                key: SBConnectionString
           - name: StorageConnectionString
             valueFrom:
               secretKeyRef:
                 name: stickerstore
                 key: StorageConnectionString
+      imagePullSecrets:
+      - name: acr-auth

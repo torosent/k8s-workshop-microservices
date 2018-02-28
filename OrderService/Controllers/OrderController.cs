@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.ServiceBus;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Queue;
 
 namespace OrderService.Controllers
 {
@@ -12,26 +13,28 @@ namespace OrderService.Controllers
     public class OrderController : Controller
     {
 
-        static IQueueClient queueClient;
 
         // POST api/order
         [HttpPost]
         public async void Post(string value, int count)
         {
-            var serviceBusConnectionString = Environment.GetEnvironmentVariable("SBConnectionString");
+            var storageConnectionString = Environment.GetEnvironmentVariable("StorageConnectionString");
+            var cloudStorageAccount = CloudStorageAccount.Parse(storageConnectionString);
+            Console.WriteLine(storageConnectionString);
             const string QueueName = "stickersqueue";
-            queueClient = new QueueClient(serviceBusConnectionString, QueueName);
+            var client = cloudStorageAccount.CreateCloudQueueClient();
+            var queue = client.GetQueueReference(QueueName);
+            await queue.CreateIfNotExistsAsync();
 
-            for (var i = 1; i < count+1; i++)
+            for (var i = 1; i < count + 1; i++)
             {
                 try
                 {
                     // Create a new message to send to the queue
                     string messageBody = $"Printing {value} #{i} ";
-                    var message = new Message(Encoding.UTF8.GetBytes(messageBody));
-
+                    var message = new CloudQueueMessage(messageBody);
                     // Send the message to the queue
-                    await queueClient.SendAsync(message);
+                    await queue.AddMessageAsync(message);
                 }
                 catch (Exception exception)
                 {
