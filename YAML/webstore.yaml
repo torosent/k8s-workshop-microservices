@@ -19,3 +19,5 @@ spec:
           value: "http://orderservice/api/order"
         - name: STATUS_SERVICE
           value: "http://statusservice/api/status" 
+      imagePullSecrets:
+      - name: acr-auth
