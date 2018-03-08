@@ -43,6 +43,13 @@ kubectl apply -f printing.yaml
 ```
 
 ### Helm
+
+##### Note
+Remove the previous webstore deployment
+```sh
+kubectl delete deployment webstore-deployment
+```
+
 1. Create Helm chart for Webstore. [Example](/Deployment/Helm)
 ```sh
 helm create stickerstore
