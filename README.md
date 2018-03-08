@@ -12,7 +12,7 @@
 ```sh
 docker build -t tomerplayground.azurecr.io/webstore:latest .
 ```
-2. Provision Azure Container Registry [ACR](https://docs.microsoft.com/en-us/azure/aks/tutorial-kubernetes-prepare-acr) & [Azure Storage](https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az_storage_account_create)
+2. Provision [Azure Container Registry](https://docs.microsoft.com/en-us/azure/aks/tutorial-kubernetes-prepare-acr) & [Azure Storage](https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az_storage_account_create)
 3. Setup ACR in the K8S cluster 
 ```sh
 kubectl create secret docker-registry acr-auth --docker-server <acr-login-server> --docker-username <service-principal-ID> --docker-password <service-principal-password> --docker-email <email-address>
