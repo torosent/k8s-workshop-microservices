@@ -1,0 +1,23 @@
+# Default values for webstore.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: tomerplayground.azurecr.io/webstore
+  tag: latest
+  pullPolicy: IfNotPresent
+  pullSecret: acr-auth
+
+service:
+  type: LoadBalancer
+  port: 80
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -1,0 +1,1 @@
+helm upgrade --install stickerstore ./stickerstore

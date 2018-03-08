@@ -1,0 +1,1 @@
+helm install --name jenkins-release -f values.yaml  stable/jenkins

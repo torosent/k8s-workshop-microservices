@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: printingservice-deployment
+spec:
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: printingservice
+    spec:
+      containers:
+      - name: printingservice
+        image: tomerplayground.azurecr.io/printingservice:latest
+        imagePullPolicy: Always
+        env:
+          - name: StorageConnectionString
+            valueFrom:
+              secretKeyRef:
+                name: stickerstore
+                key: StorageConnectionString
+      imagePullSecrets:
+      - name: acr-auth
