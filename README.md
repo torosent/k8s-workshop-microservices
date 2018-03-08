@@ -19,7 +19,7 @@ kubectl create secret docker-registry acr-auth --docker-server <acr-login-server
 ```
 4. Push the containers into ACR
 5. Get Azure storage [connection string](https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az_storage_account_show_connection_string)
-6. Insert the connection string in [secret.yaml](/Deployment/YAML/secret.YAML)
+6. Insert the connection string in [secret.yaml](/Deployment/YAML/secret.yaml)
 ##### Note
 To prepare secret, we need to encode it to Base64
 `echo -n "admin" | base64 ` or use `https://www.base64encode.org/`
