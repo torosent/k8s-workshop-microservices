@@ -20,9 +20,11 @@ kubectl create secret docker-registry acr-auth --docker-server <acr-login-server
 4. Push the containers into ACR
 5. Get Azure storage [connection string](https://docs.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az_storage_account_show_connection_string)
 6. Insert the connection string in [secret.yaml](/Deployment/YAML/secret.yaml)
-##### Note
-To prepare secret, we need to encode it to Base64
-`echo -n "admin" | base64 ` or use `https://www.base64encode.org/`
+
+**to prepare secret, we need to encode it to Base64**
+```sh
+echo -n "admin" | base64 ` or use `https://www.base64encode.org/
+```
 
 7. Edit the relevant [YAML](/Deployment/YAML) files and deploy the micro-services application in K8S.
 ```sh
@@ -44,8 +46,8 @@ kubectl apply -f printing.yaml
 
 ### Helm
 
-##### Note
-Remove the previous webstore deployment
+
+**Remove the previous webstore deployment**
 ```sh
 kubectl delete deployment webstore-deployment
 ```

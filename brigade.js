@@ -9,12 +9,11 @@ events.on("push", (brigadeEvent, project) => {
     brigConfig.set("acrUsername", project.secrets.acrUsername)
     brigConfig.set("acrPassword", project.secrets.acrPassword)
     brigConfig.set("webstoreImage", "webstore")
-    brigConfig.set("gitSHA", brigadeEvent.commit.substr(0,7))
+    brigConfig.set("gitSHA", brigadeEvent.revision.commit.substr(0,7))
     brigConfig.set("eventType", brigadeEvent.type)
     brigConfig.set("branch", getBranch(gitPayload))
     brigConfig.set("imageTag", `${brigConfig.get("branch")}-${brigConfig.get("gitSHA")}`)
     brigConfig.set("webstoreACRImage", `${brigConfig.get("acrServer")}/${brigConfig.get("webstoreImage")}`)
-    
     console.log(`PUSH ==> gitHub webook (${brigConfig.get("branch")}) with commit ID ${brigConfig.get("gitSHA")}`)
     
     // setup brigade jobs
@@ -59,7 +58,7 @@ function helmJobRunner (config, h) {
     h.image = "lachlanevenson/k8s-helm:v2.8.1"
     h.tasks = [
         "cd /src/",
-        `helm upgrade --install stickerstore-webstore ./Deployment/Helm/Stickerstore --set image.repository=${config.get("apiACRImage")} --set image.tag=${config.get("imageTag")}`,
+        `helm upgrade --install stickerstore-webstore ./Deployment/Helm/stickerstore --set image.repository=${config.get("webstoreACRImage")} --set image.tag=${config.get("imageTag")}`,
     ]
 }
 

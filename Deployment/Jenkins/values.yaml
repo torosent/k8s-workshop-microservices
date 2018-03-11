@@ -12,7 +12,7 @@ Master:
   UseSecurity: true
   AdminUser: admin
   AdminPassword: SomePassword
-  Cpu: "500m"
+  Cpu: "1024m"
   Memory: "1024Mi"
 # Set min/max heap here if needed with:
 # JavaOpts: "-Xms512m -Xmx512m"
@@ -51,6 +51,7 @@ Master:
       - pipeline-github-lib
       - ghprb
       - azure-acs
+      - docker-build-publish
 # Used to approve a list of groovy functions in pipelines used the script-security plugin. Can be viewed under /scriptApproval
   ScriptApproval:
     - "method groovy.json.JsonSlurperClassic parseText java.lang.String"
@@ -83,7 +84,7 @@ Master:
 
 Agent:
   Enabled: true
-  Image: jenkinsci/jnlp-slave
+  Image:  torosent/jenkinsdnd
   ImageTag: latest
   Component: "jenkins-slave"
   Privileged: true
@@ -99,6 +100,9 @@ Agent:
     - type: HostPath
       hostPath: /var/run/docker.sock
       mountPath: /var/run/docker.sock
+    - type: HostPath
+      hostPath: /usr/bin/docker
+      mountPath: /usr/bin/docker 
   NodeSelector: {}
   # Key Value selectors. Ex:
   # jenkins-agent: v1
