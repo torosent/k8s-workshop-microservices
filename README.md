@@ -67,7 +67,11 @@ helm upgrade --install stickerstore ./stickerstore
 ```
 
 ### Brigade
-1. Deploy [Brigade](https://github.com/Azure/brigade#quickstart)
+1. Install [Brigade](https://github.com/Azure/brigade#quickstart)
+```sh
+helm repo add brigade https://azure.github.io/brigade
+helm install -n brigade brigade/brigade
+```
 2. Create a Github token [Here](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/)
 3. Create a Github webhook and connect it with brigade. [Instructions](https://github.com/Azure/brigade/blob/master/docs/topics/github.md)
 4. Edit [values.yaml](/Deployment/Brigade/values.yaml) and install the brigade project 
