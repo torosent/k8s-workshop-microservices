@@ -2,7 +2,7 @@
 
 ## Architecture
 
-![image](https://user-images.githubusercontent.com/17064840/35954452-b18fbdbe-0cc4-11e8-952d-cb5d3aee2341.png)
+![image](https://user-images.githubusercontent.com/17064840/37338044-e93bafc0-26be-11e8-9f98-9b522daa6e02.png)
 
 ## Challenges
 
